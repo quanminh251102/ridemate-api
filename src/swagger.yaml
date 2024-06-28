@@ -1,0 +1,2417 @@
+openapi: 3.0.3
+info:
+  title: Swagger Togther we go - OpenAPI 3.0
+  contact:
+    email: skill1sp2@gmail.com
+  version: 1.0.0
+servers:
+  - url: https://together-we-go-api.vercel.app/api
+  - url: http://localhost:8080/api
+tags:
+  - name: auth
+  - name: apply
+    description: User apply to poster
+  - name: booking
+  - name: chat_room
+  - name: message
+  - name: review
+  - name: user
+  - name: notification
+  - name: chatbot
+paths:
+  /statistics:
+    get:
+      tags:
+        - statistics
+      description:  admin get statistics
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accsess_token:
+                    type: string      
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+      security:
+        - api_key: []
+  /auth/register:
+    post:
+      tags:
+        - auth
+      description: Create account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'          
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+  /auth/login:
+    post:
+      tags:
+        - auth
+      description: user login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accsess_token:
+                    type: string
+                  refresh_token:
+                    type: string          
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+  /auth/loginWithGoogle:
+    post:
+      tags:
+        - auth
+      description: user login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+                avatar:
+                  type: string
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accsess_token:
+                    type: string
+                  refresh_token:
+                    type: string          
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+  /auth/resetPassword:
+    post:
+      tags:
+        - auth
+      description: user refresh access token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                    type: string
+                password:
+                    type: string
+                new_password:
+                    type: string
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accsess_token:
+                    type: string      
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+  /auth/refresh:
+    post:
+      tags:
+        - auth
+      description: user refresh access token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refresh_token:
+                    type: string
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accsess_token:
+                    type: string      
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+  /booking/recommend:
+    get:
+      summary: get bookings recommend
+      tags:
+        - booking
+      parameters:
+        - in: query 
+          name: type
+          schema:
+            type: string
+            default: 'from_input'
+            enum : ['from_input', 'from_user']
+        - in: query
+          description: example Đại học Quốc gia Thành phố Hồ Chí Minh (Thành phố Thủ Đức, Thành phố Hồ Chí Minh và Thành phố Dĩ An, tỉnh Bình Dương, Việt Nam)
+          name: startPointLat
+          schema:
+            type: number
+            default: 10.8686
+        - in: query
+          name: startPointLong
+          schema:
+            type: number
+            default: 106.7964
+        - in: query
+          description: example Trường Đại học Công nghiệp TP.HCM (12 Nguyễn Văn Bảo, Phường 04, Quận Gò Vấp, Thành phố Hồ Chí Minh, Việt Nam)
+          name: endPointLat
+          schema:
+            type: number
+            default: 10.9383
+        - in: query 
+          name: endPointLong
+          schema:
+            type: number
+            default: 106.824
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  message:
+                    type: string
+                    example: string
+                  total:
+                    type: integer
+                    example: 1
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Booking_get'      
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+      security:
+        - api_key: []
+  /booking:
+    post:
+      summary: create booking
+      tags:
+        - booking
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Booking_post'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  message:
+                    type: string
+                    example: string
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/Booking_get'             
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+      security:
+        - api_key: []
+    get:
+      summary: get bookings
+      tags:
+        - booking
+      parameters:
+        - in: query
+          name: id
+          description: object id of booking, if you want to get 1
+          schema:
+            type: string
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: pageSize
+          schema:
+            type: integer
+            default: 20
+        - in: query
+          name: status
+          description: 'available  2, complete: 1'
+          schema:
+            type: integer     
+            enum: [1,2]
+        - in: query
+          name: keyword
+          description: search in startAddress, endAddress, content
+          schema:
+            type: string
+      
+        - in: query
+          name: authorId
+          schema:
+            type: string
+            description: objectId of user
+        - in: query
+          name: bookingType
+          schema:
+            type: string
+            enum: ["Tìm tài xế", "Tìm hành khách"]
+        - in: query
+          name: isFavorite
+          schema:
+            type: boolean
+        - in: query
+          name: isMine
+          schema:
+            type: boolean
+        - in: query
+          name: isMayFavorite
+          schema:
+            type: boolean
+        - in: query
+          name: minPrice
+          schema:
+            type: integer
+        - in: query
+          name: maxPrice
+          schema:
+            type: integer
+        - in: query
+          name: startAddress
+          schema:
+            type: string
+        - in: query
+          name: endAddress
+          schema:
+            type: string
+        - in: query
+          name: startTime
+          description: in ISO Date Format  for example 2000-10-31T01:30:00.000-05:00
+          schema:
+            type: string
+        - in: query
+          name: endTime
+          description: in ISO Date Format for example 2000-10-31T01:30:00.000-05:00
+          schema:
+            type: string
+
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  message:
+                    type: string
+                    example: string
+                  total:
+                    type: integer
+                    example: 1
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Booking_get'      
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+      security:
+        - api_key: []  
+  /booking/{id}:
+    patch:
+      summary: user update booking
+      tags:
+        - booking
+      parameters:
+        - name: id
+          in: path
+          description: objectId of booking
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+                type: object
+                properties:
+                  applyNum:
+                    type: string
+                    default: 1
+                  watchedNum:
+                    type: string
+                    default: 1
+                  savedNum:
+                    type: string
+                    default: 1
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  message:
+                    type: string
+                    example: string
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/Booking_get'             
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+      security:
+        - api_key: []
+    put:
+      summary: user update booking
+      tags:
+        - booking
+      parameters:
+        - name: id
+          in: path
+          description: objectId of booking
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Booking_post'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  message:
+                    type: string
+                    example: string
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/Booking_get'             
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+      security:
+        - api_key: []
+    delete:
+      summary: user remove booking
+      tags:
+        - booking
+      parameters:
+        - name: id
+          in: path
+          description: objectId of booking
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  message:
+                    type: string
+                    example: string
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/Booking_get'      
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+      security:
+        - api_key: []
+  /booking/saved/{id}:
+    post:
+      summary: user save booking
+      tags:
+        - booking
+      parameters:
+        - name: id
+          in: path
+          description: objectId of booking
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  message:
+                    type: string
+                    example: string
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/Booking_get'             
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+      security:
+        - api_key: []
+    delete:
+      summary: user remove booking in saved list
+      tags:
+        - booking
+      parameters:
+        - name: id
+          in: path
+          description: objectId of booking
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  message:
+                    type: string
+                    example: string
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/Booking_get'      
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+      security:
+        - api_key: []   
+  /apply:
+    post:
+      summary: create apply
+      tags:
+        - apply
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Apply_post'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  message:
+                    type: string
+                    example: string
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/Apply_get'             
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+      security:
+        - api_key: []
+    get:
+      summary: get applys
+      tags:
+        - apply
+      parameters:
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: pageSize
+          required: true
+          schema:
+            type: integer
+            default: 20
+        - in: query
+          name: sortCreatedAt
+          description: -1 means lasted first
+          schema:
+            type: integer         
+            enum:
+              - 1
+              - -1
+        - in: query
+          name: sortUpdatedAt
+          description: -1 means lasted first
+          schema:
+            type: integer     
+            enum:
+              - 1
+              - -1
+        - in: query
+          name: applyerId
+          schema:
+            type: string
+            description: objectId of user 
+        - in: query
+          name: bookingId
+          schema:
+            type: string
+            description: objectId of booking                 
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  message:
+                    type: string
+                    example: string
+                  total:
+                    type: integer
+                    example: 1
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Apply_get'      
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+      security:
+        - api_key: []
+  /apply/{id}:
+    get:
+      summary: get 1 apply
+      tags:
+        - apply
+      parameters:
+        - name: id
+          in: path
+          description: objectId of apply
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  message:
+                    type: string
+                    example: string
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/Apply_get'      
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+      security:
+        - api_key: []
+    patch:
+      summary: update 1 apply
+      tags:
+        - apply
+      parameters:
+        - name: id
+          in: path
+          description: objectId of apply
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  message:
+                    type: string
+                    example: string
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/Apply_get'      
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+      security:
+        - api_key: []
+  /chat_room:
+    post:
+      summary: create chat room
+      tags:
+        - chat_room
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Chat_room_post'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  message:
+                    type: string
+                    example: string
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/Chat_room_get'             
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+      security:
+        - api_key: []
+    get:
+      summary: get chat_rooms
+      tags:
+        - chat_room
+      parameters:
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: pageSize
+          required: true
+          schema:
+            type: integer
+            default: 20
+        - in: query
+          name: sortCreatedAt
+          description: -1 means lasted first
+          schema:
+            type: integer         
+            enum:
+              - 1
+              - -1
+        - in: query
+          name: sortUpdatedAt
+          description: -1 means lasted first
+          schema:
+            type: integer
+            enum:
+              - 1
+              - -1
+        - in: query
+          name: userId1
+          schema:
+            type: string
+            description: objectId of user 
+        - in: query
+          name: userId2
+          schema:
+            type: string
+            description: objectId of user                
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  message:
+                    type: string
+                    example: string
+                  total:
+                    type: integer
+                    example: 1
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Chat_room_get'      
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+      security:
+        - api_key: []
+  /chat_room/{id}:
+    get:
+      summary: get 1 chat room
+      tags:
+        - chat_room
+      parameters:
+        - name: id
+          in: path
+          description: objectId of chat room
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  message:
+                    type: string
+                    example: string
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/Chat_room_get'      
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+      security:
+        - api_key: []
+  /message:
+    post:
+      summary: create message
+      tags:
+        - message
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Message_post'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  message:
+                    type: string
+                    example: string
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/Message_get'             
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+      security:
+        - api_key: []
+    get:
+      summary: get messages
+      tags:
+        - message
+      parameters:
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: pageSize
+          required: true
+          schema:
+            type: integer
+            default: 20
+        - in: query
+          name: sortCreatedAt
+          description: -1 means lasted first
+          schema:
+            type: integer         
+            enum:
+              - 1
+              - -1
+        - in: query
+          name: sortUpdatedAt
+          description: -1 means lasted first
+          schema:
+            type: integer
+            enum:
+              - 1
+              - -1
+        - in: query
+          name: chat_room_id
+          schema:
+            type: string
+            description: objectId of chat room              
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  message:
+                    type: string
+                    example: string
+                  total:
+                    type: integer
+                    example: 1
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Message_get'      
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+      security:
+        - api_key: []
+  /message/{id}:
+    patch:
+      summary: update 1 message
+      tags:
+        - message
+      parameters:
+        - name: id
+          in: path
+          description: objectId of message
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                message:          
+                  type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  message:
+                    type: string
+                    example: string
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/Message_get'      
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+      security:
+        - api_key: []
+  /review:
+    post:
+      summary: create review
+      tags:
+        - review
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Review_post'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  message:
+                    type: string
+                    example: string
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/Review_get'             
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+      security:
+        - api_key: []
+    get:
+      summary: get reviews
+      tags:
+        - review
+      parameters:
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: pageSize
+          required: true
+          schema:
+            type: integer
+            default: 20
+        - in: query
+          name: sortCreatedAt
+          description: -1 means lasted first
+          schema:
+            type: integer         
+            enum:
+              - 1
+              - -1
+        - in: query
+          name: sortUpdatedAt
+          description: -1 means lasted first
+          schema:
+            type: integer
+            enum:
+              - 1
+              - -1          
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  message:
+                    type: string
+                    example: string
+                  total:
+                    type: integer
+                    example: 1
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Message_get'      
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+      security:
+        - api_key: []
+  /user/profile:
+    get:
+      summary: get current user
+      tags:
+        - user
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  message:
+                    type: string
+                    example: string
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/User'      
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+      security:
+        - api_key: []
+    patch:
+      summary: update current user
+      tags:
+        - user
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                avatarUrl:          
+                  type: string
+                first_name:          
+                  type: string
+                last_name:          
+                  type: string
+                birth_date:          
+                  type: string
+                locationid:          
+                  type: string
+                location_mainText:
+                  type: string
+                location_address:
+                  type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  message:
+                    type: string
+                    example: string
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/Apply_get'      
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+      security:
+        - api_key: []
+  /user:
+    get:
+      summary: get applys
+      tags:
+        - user
+      parameters:
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: pageSize
+          required: true
+          schema:
+            type: integer
+            default: 20
+        - in: query
+          name: keyword
+          schema:
+            type: string                
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  message:
+                    type: string
+                    example: string
+                  total:
+                    type: integer
+                    example: 1
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'      
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+      security:
+        - api_key: []
+  /user/{id}:
+    get:
+      summary: get 1 user
+      tags:
+        - user
+      parameters:
+        - name: id
+          in: path
+          description: objectId of user
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  message:
+                    type: string
+                    example: string
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/User'      
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+      security:
+        - api_key: []
+    patch:
+      summary: update 1 user
+      tags:
+        - user
+      parameters:
+        - name: id
+          in: path
+          description: objectId of user
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  message:
+                    type: string
+                    example: string
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/Apply_get'      
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+      security:
+        - api_key: []
+    delete:
+      summary: delete 1 user
+      tags:
+        - user
+      parameters:
+        - name: id
+          in: path
+          description: objectId of user
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  message:
+                    type: string
+                    example: string
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/User'      
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+      security:
+        - api_key: []
+  /notification:
+    post:
+      summary: create notification
+      tags:
+        - notification
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Notification_post'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  message:
+                    type: string
+                    example: string
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/Notification_get'             
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+      security:
+        - api_key: []
+    get:
+      summary: get notifications
+      tags:
+        - notification
+      parameters:
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: pageSize
+          required: true
+          schema:
+            type: integer
+            default: 20
+        - in: query
+          name: sortCreatedAt
+          description: -1 means lasted first
+          schema:
+            type: integer         
+            enum:
+              - 1
+              - -1
+        - in: query
+          name: sortUpdatedAt
+          description: -1 means lasted first
+          schema:
+            type: integer
+            enum:
+              - 1
+              - -1
+        - in: query
+          name: receiverid
+          schema:
+            type: string
+            description: objectId of user             
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  message:
+                    type: string
+                    example: string
+                  total:
+                    type: integer
+                    example: 1
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Notification_get'      
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+      security:
+        - api_key: []
+  /location-history-search/{id}:
+    get:
+      summary: user get one location-history-search
+      tags:
+        - location-history-search
+      parameters:
+        - name: id
+          in: path
+          description: objectId of location-history-search
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  message:
+                    type: string
+                    example: string
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/location_history_search_post'      
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+      security:
+        - api_key: []
+    put:
+      summary: user update 1 location-history-search
+      tags:
+        - location-history-search
+      parameters:
+        - name: id
+          in: path
+          description: objectId of location-history-search
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  message:
+                    type: string
+                    example: string
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/location_history_search_post'      
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+      security:
+        - api_key: []
+    delete:
+      summary: user delete 1 location-history-search
+      tags:
+        - location-history-search
+      parameters:
+        - name: id
+          in: path
+          description: objectId of location-history-search
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  message:
+                    type: string
+                    example: string
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/location_history_search_post'      
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+      security:
+        - api_key: []
+  /location-history-search:
+    post:
+      summary: user create location history search
+      tags:
+        - location-history-search
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/location_history_search_post'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  message:
+                    type: string
+                    example: string
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/location_history_search_post'             
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+      security:
+        - api_key: []
+    get:
+      summary: user get location-history-search
+      tags:
+        - location-history-search
+      parameters:
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: pageSize
+          required: true
+          schema:
+            type: integer
+            default: 20
+        - in: query
+          name: sortCreatedAt
+          description: -1 means lasted first
+          schema:
+            type: integer         
+            enum:
+              - 1
+              - -1
+        - in: query
+          name: sortUpdatedAt
+          description: -1 means lasted first
+          schema:
+            type: integer
+            enum:
+              - 1
+              - -1        
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  message:
+                    type: string
+                    example: string
+                  total:
+                    type: integer
+                    example: 1
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/location_history_search_post'      
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+      security:
+        - api_key: []
+  /location-saved/{id}:
+    get:
+      summary: user get one location-saved
+      tags:
+        - location-saved
+      parameters:
+        - name: id
+          in: path
+          description: objectId of location-saved
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  message:
+                    type: string
+                    example: string
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/location_saved_post'      
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+      security:
+        - api_key: []
+    put:
+      summary: user update 1 location-saved
+      tags:
+        - location-saved
+      parameters:
+        - name: id
+          in: path
+          description: objectId of location-saved
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  message:
+                    type: string
+                    example: string
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/location_saved_post'      
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+      security:
+        - api_key: []
+    delete:
+      summary: user delete 1 location-saved
+      tags:
+        - location-saved
+      parameters:
+        - name: id
+          in: path
+          description: objectId of location-saved
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  message:
+                    type: string
+                    example: string
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/location_saved_post'      
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+      security:
+        - api_key: []
+  /location-saved:
+    post:
+      summary: user create location history search
+      tags:
+        - location-saved
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/location_saved_post'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  message:
+                    type: string
+                    example: string
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/location_saved_post'             
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+      security:
+        - api_key: []
+    get:
+      summary: user get location-saved
+      tags:
+        - location-saved
+      parameters:
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: pageSize
+          required: true
+          schema:
+            type: integer
+            default: 20
+        - in: query
+          name: sortCreatedAt
+          description: -1 means lasted first
+          schema:
+            type: integer         
+            enum:
+              - 1
+              - -1
+        - in: query
+          name: sortUpdatedAt
+          description: -1 means lasted first
+          schema:
+            type: integer
+            enum:
+              - 1
+              - -1        
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  message:
+                    type: string
+                    example: string
+                  total:
+                    type: integer
+                    example: 1
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/location_saved_post'      
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+      security:
+        - api_key: []
+  /chatbot/find-1-booking:
+    post:
+      summary: get 1 booking recommend in chat bot
+      tags:
+        - chatbot
+      parameters:
+        - in: query 
+          name: type
+          schema:
+            type: string
+            default: 'from_input'
+            enum : ['from_input', 'from_user']
+        - in: query
+          description: example Đại học Quốc gia Thành phố Hồ Chí Minh (Thành phố Thủ Đức, Thành phố Hồ Chí Minh và Thành phố Dĩ An, tỉnh Bình Dương, Việt Nam)
+          name: startPointLat
+          schema:
+            type: number
+            default: 10.8686
+        - in: query
+          name: startPointLong
+          schema:
+            type: number
+            default: 106.7964
+        - in: query
+          description: example Trường Đại học Công nghiệp TP.HCM (12 Nguyễn Văn Bảo, Phường 04, Quận Gò Vấp, Thành phố Hồ Chí Minh, Việt Nam)
+          name: endPointLat
+          schema:
+            type: number
+            default: 10.9383
+        - in: query 
+          name: endPointLong
+          schema:
+            type: number
+            default: 106.824
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  message:
+                    type: string
+                    example: string
+                  total:
+                    type: integer
+                    example: 1
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Booking_get'      
+        '400':
+          description: Invalid ID supplied
+        '500':
+          description: Server internal error
+      security:
+        - api_key: []
+
+components:
+  schemas:
+    Apply_post:
+      type: object
+      properties:
+        dealPrice:
+          type: integer
+          format: int64
+          example: 198772
+        booking:
+          type: string
+          description: objectId
+          example: "string"
+        state:
+          type: string
+          default: 'waiting'
+          enum:
+            - 'waiting'
+            - 'accepted'
+            - 'starting'
+            - 'refuse'
+      xml:
+        name: apply
+    Apply_get:
+      type: object
+      properties:
+        id:
+          type: string
+          description: objectId
+          example: "string"
+        applyer:
+          $ref: '#/components/schemas/User'
+        booking:
+          $ref: '#/components/schemas/Booking_get'
+        deal_price:
+          type: integer
+          format: int64
+          example: 198772     
+        state:
+          type: string
+          default: 'waiting'
+          enum:
+            - 'waiting'
+            - 'accepted'
+            - 'starting'
+            - 'refuse'
+        createdAt:
+          type: string
+          example: "string"
+        updatedAt:
+          type: string
+          example: "string"
+      xml:
+        name: apply
+    Booking_post:
+      type: object
+      properties:
+        price:
+          type: integer
+          format: int64
+          example: 60000
+        bookingType:
+          type: string
+          example: "Tìm tài xế"
+        content:
+          type: string
+          example: "go to school"
+        time:
+          type: string
+          example: "2024-03-15T04:27:41.000+00:00"
+        startPointLat:
+          type: int32
+          example: 10.8686
+        startPointLong:
+          type: int32
+          example: 106.7964
+        startPointId:
+          type: string
+          example: "string"
+        startPointMainText:
+          type: string
+          example: Đại học Quốc gia Thành phố Hồ Chí Minh
+        startPointAddress:
+          type: string
+          example: Thành phố Thủ Đức, Thành phố Hồ Chí Minh và Thành phố Dĩ An, tỉnh Bình Dương, Việt Nam
+        endPointLat:
+          type: int32
+          example: 10.9383
+        endPointLong:
+          type: int32
+          example: 106.824
+        endPointId:
+          type: string
+          example: "string"
+        endPointMainText:
+          type: string
+          example: Trường Đại học Công nghiệp TP.HCM
+        endPointAddress:
+          type: string
+          example: 12 Nguyễn Văn Bảo, Phường 04, Quận Gò Vấp, Thành phố Hồ Chí Minh, Việt Nam
+        distance:
+          type: string
+          example: "1.41 km"
+        duration:
+          type: string
+          example: "2.46 phút"
+      xml:
+        name: booking
+    Booking_get:
+      type: object
+      properties:
+        id:
+          type: string
+          description: objectId
+          example: "string"
+        authorId:
+          $ref: '#/components/schemas/User'
+        status:
+          type: string
+          example: "string"
+        price:
+          type: integer
+          format: int64
+          example: 198772
+        bookingType:
+          type: string
+          example: "string"
+        time:
+          type: string
+          example: "string"
+        startPointLat:
+          type: string
+          example: "string"
+        startPointLong:
+          type: string
+          example: "string"
+        startPointId:
+          type: string
+          example: "string"
+        startPointMainText:
+          type: string
+          example: "string"
+        startPointAddress:
+          type: string
+          example: "string"
+        endPointLat:
+          type: string
+          example: "string"
+        endPointLong:
+          type: string
+          example: "string"
+        endPointId:
+          type: string
+          example: "string"
+        endPointMainText:
+          type: string
+          example: "string"
+        endPointAddress:
+          type: string
+          example: "string"
+        distance:
+          type: string
+          example: "string"
+        duration:
+          type: string
+          example: "string"
+        createdAt:
+          type: string
+          example: "string"
+        updatedAt:
+          type: string
+          example: "string"
+      xml:
+        name: booking
+    Chat_room_post:
+      type: object
+      properties:
+        userId:
+          type: string
+          description: objectId
+          example: "string"
+      xml:
+        name: chat_room
+    Chat_room_get:
+      type: object
+      properties:
+        id:
+          type: string
+          description: objectId
+          example: "string"
+        userId1:
+          type: string
+          description: objectId
+          example: "string"
+        user1:
+          $ref: '#/components/schemas/User'
+        userId2:
+          type: string
+          description: objectId
+          example: "string"
+        user2:
+          $ref: '#/components/schemas/User'
+        num_unwatched_1:
+          type: integer
+          format: int64
+          example: 1
+        num_unwatched_2:
+          type: integer
+          format: int64
+          example: 1
+        lastMessage:
+          $ref: '#/components/schemas/Message_get'
+        createdAt:
+          type: string
+          example: "string"
+        updatedAt:
+          type: string
+          example: "string"
+      xml:
+        name: chat_room
+    Message_post:
+      type: object
+      properties:
+        chatRoomId:
+          type: string
+          description: objectId
+          example: "string"
+        message:
+          type: string
+          example: "string"
+        type:
+          type: string
+          default: 'text'
+          enum:
+            - 'text'
+            - 'image'
+      xml:
+        name: message
+    Message_get:
+      type: object
+      properties:
+        id:
+          type: string
+          description: objectId
+          example: "string"
+        chatRoomId:
+          type: string
+          description: objectId
+          example: "string"
+        userId:
+          type: string
+          description: objectId
+          example: "string"
+        message:
+          type: string
+          example: "string"
+        type:
+          type: string
+          default: 'text'
+          enum:
+            - 'text'
+            - 'image'
+        createdAt:
+          type: string
+          example: "string"
+        updatedAt:
+          type: string
+          example: "string"
+      xml:
+        name: message
+    Review_post:
+      type: object
+      properties:
+        receiverId:
+          type: string
+          description: objectId
+          example: "string"
+        applyId:
+          type: string
+          description: objectId
+          example: "string"
+        star:
+          type: integer
+          format: int64
+          example: 2
+        note:
+          type: string
+          example: "string"
+      xml:
+        name: review
+    Review_get:
+      type: object
+      properties:
+        id:
+          type: string
+          description: objectId
+          example: "string"
+        creater:
+          $ref: '#/components/schemas/User'
+        receiver:
+          $ref: '#/components/schemas/User'
+        apply:
+          $ref: '#/components/schemas/Apply_get'
+        star:
+          type: integer
+          format: int64
+          example: 1
+        note:
+          type: string
+          example: "string"
+        createdAt:
+          type: string
+          example: "string"
+        updatedAt:
+          type: string
+          example: "string"
+      xml:
+        name: review
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          description: objectId
+          example: "string"
+        firstName:
+          type: string
+          example: "string"
+        lastName:
+          type: string
+          example: "string"
+        email:
+          type: string
+          example: "string"
+        password:
+          type: string
+          example: "string"
+        avatarUrl:
+          type: string
+          example: "string"
+        phoneNumber:
+          type: string
+          example: "string"
+        time:
+          type: string
+          example: "string"
+        birthDate:
+          type: string
+          example: "string"
+        gender:
+          type: string
+          example: "string"
+          default: 'male'
+          enum:
+            - 'male'
+            - 'female'
+        role:
+          type: string
+          example: "user"
+          default: 'user'
+          enum:
+            - 'user'
+            - 'admin'
+        locationId:
+          type: string
+          example: "string"
+        locationMainText:
+          type: string
+          example: "string"
+        locationAddress:
+          type: string
+          example: "string"
+        createdAt:
+          type: string
+          example: "string"
+        updatedAt:
+          type: string
+          example: "string"
+      xml:
+        name: user
+    Notification_post:
+      type: object
+      properties:
+        text:
+          type: string
+          example: "string"
+        # receiver:
+        #   type: string
+        #   description: objectId
+        #   example: "string"
+        # author:
+        #   type: string
+        #   description: objectId
+        #   example: "string"
+      xml:
+        name: notification
+    Notification_get:
+      type: object
+      properties:
+        id:
+          type: string
+          description: objectId
+          example: "string"
+        text:
+          type: string
+          example: "string"
+        receiver:
+          $ref: '#/components/schemas/User'
+        author:
+          $ref: '#/components/schemas/User'
+      xml:
+        name: notification
+    location_history_search_post:
+      type: object
+      properties:
+        placeName:
+          type: string
+          example: "string"
+        placeDescription:
+          type: string
+          example: "string"
+        placeId:
+          type: string
+          example: "string"
+        placeGeoCode:
+          type: string
+          example: "string"
+      xml:
+        name: location_history_search
+    location_saved_post:
+      type: object
+      properties:
+        type:
+          type: string
+          example: "string"
+          default: 'home'
+          enum:
+            - 'home'
+            - 'company'
+            - 'other'
+        placeName:
+          type: string
+          example: "string"
+        placeDescription:
+          type: string
+          example: "string"
+        placeId:
+          type: string
+          example: "string"
+        placeGeoCode:
+          type: string
+          example: "string"
+      xml:
+        name: location_saved
+    ApiResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        type:
+          type: string
+        message:
+          type: string
+      xml:
+        name: '##default'
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
